@@ -420,7 +420,7 @@
   };
 
   systemd.services.aria2.serviceConfig = {
-    UMask = "0002";
+    UMask = lib.mkForce "0002";
   };
 
   # Enable local ariang server
