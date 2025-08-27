@@ -1,10 +1,7 @@
 { pkgs, ... }: {
 
   programs = {
-    # some gnupg settings moved to /security/
-    file-roller = {
-      enable = true;
-    };
+    file-roller.enable = true;
     tmux.enable = true;
   };
 

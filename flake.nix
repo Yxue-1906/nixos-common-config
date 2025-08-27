@@ -9,7 +9,7 @@
   };
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
-    nixpkgs-sing-box.url = "github:NixOS/nixpkgs/2634ef71a80f41ff04234be5d5cd0af677c05262";
+    nixpkgs-sing-box.url = "github:NixOS/nixpkgs/d416416015943eb0b191fbe37b3e7e4046f5cc60";
     # nix-alien.url = "github:thiagokokada/nix-alien";
   };
   outputs = { self, nixpkgs, ... }@inputs: with nixpkgs.lib; {
