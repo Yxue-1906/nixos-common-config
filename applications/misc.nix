@@ -1,10 +1,7 @@
 { pkgs, ... }: {
 
   programs = {
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
+    # some gnupg settings moved to /security/
     file-roller = {
       enable = true;
     };
@@ -15,7 +12,6 @@
     git-crypt
     home-manager
     _7zz
-    zotero
   ];
 
   # make GVFS happy

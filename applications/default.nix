@@ -3,7 +3,8 @@
     ./nix-ld.nix
     ./git.nix
     ./aria2.nix
-    ./IDEs.nix
+    ./gnupg.nix
+    # ./IDEs.nix
     ./editors.nix
     ./browsers.nix
     ./misc.nix
