@@ -2,12 +2,13 @@ set -e
 
 cd $(git rev-parse --show-toplevel)
 
-# check config can be built
-nixos-rebuild build
-
 # pull remote changes
 git pull 
 
 # update lock
 nix flake update
+
+# check config can be built
+nixos-rebuild build
+
 git add flake.lock
