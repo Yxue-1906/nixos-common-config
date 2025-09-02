@@ -15,6 +15,7 @@
 	  --save_to "/run/sing-box/config.json"
       '';
   systemd.services.sing-box.overrideStrategy = "asDropin";
+  systemd.services.sing-box.requires = [ "network.target" "nss-lookup.target" "network-online.target" ];
 
   services.sing-box = 
     let
