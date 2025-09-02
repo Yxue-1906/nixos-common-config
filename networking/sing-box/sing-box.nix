@@ -1,21 +1,29 @@
 { self, pkgs, config, lib, secrets, ...}: {
+
   networking.firewall = {
     trustedInterfaces = [ "singbox_tun" ];
     checkReversePath = "loose";
   };
 
-  systemd.services.sing-box.preStart = with pkgs; 
-    let
-      python-with-package = lib.getExe (python3.withPackages (pypkgs: with pypkgs; [requests]));
-    in
-      lib.mkForce ''
-        ${python-with-package} ${./sing-box-prestart.py} \
-          --token ${secrets.sing-box.github-token} \
-	  --configuration_url "${secrets.sing-box.configuration-url}" \
-	  --save_to "/run/sing-box/config.json"
-      '';
-  systemd.services.sing-box.overrideStrategy = "asDropin";
-  systemd.services.sing-box.requires = [ "network.target" "nss-lookup.target" "network-online.target" ];
+
+  systemd.services.sing-box = {
+    preStart = with pkgs; 
+      let
+        python-with-package = lib.getExe (python3.withPackages (pypkgs: with pypkgs; [requests]));
+      in
+        lib.mkForce ''
+          ${python-with-package} ${./sing-box-prestart.py} \
+            --token ${secrets.sing-box.github-token} \
+            --configuration_url "${secrets.sing-box.configuration-url}" \
+            --save_to "/run/sing-box/config.json"
+        '';
+    overrideStrategy = "asDropin";
+    serviceConfig = {
+      User = "";
+      Group = "";
+    };
+    requires = [ "network.target" "nss-lookup.target" "network-online.target" ];
+  };
 
   services.sing-box = 
     let
