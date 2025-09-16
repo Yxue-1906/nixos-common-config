@@ -15,4 +15,10 @@
   services.samba-wsdd = {
     enable = true;
   };
+
+  # let adb access devices
+  # see: https://nixos.wiki/wiki/Android#adb_setup
+  services.udev.packages = [
+    pkgs.android-udev-rules
+  ];
 }

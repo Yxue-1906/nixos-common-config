@@ -8,7 +8,7 @@
     ];
   };
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-sing-box.url = "github:NixOS/nixpkgs/0ae51d2e8e7fbb16046111569a5b0378aa85a129";
     # nix-alien.url = "github:thiagokokada/nix-alien";
   };

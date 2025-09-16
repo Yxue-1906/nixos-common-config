@@ -5,23 +5,24 @@
     checkReversePath = "loose";
   };
 
-
   systemd.services.sing-box = {
-    preStart = with pkgs; 
-      let
-        python-with-package = lib.getExe (python3.withPackages (pypkgs: with pypkgs; [requests]));
-      in
-        lib.mkForce ''
-          ${python-with-package} ${./sing-box-prestart.py} \
-            --token ${secrets.sing-box.github-token} \
-            --configuration_url "${secrets.sing-box.configuration-url}" \
-            --save_to "/run/sing-box/config.json"
-        '';
     overrideStrategy = "asDropin";
+    # TODO: use CREDIENTIAL to download config
     serviceConfig = {
-      User = "";
-      Group = "";
-    };
+      User = lib.mkForce "";
+      Group = lib.mkForce "";
+      ExecStartPre = with pkgs; 
+        let
+          python-with-package = lib.getExe (python3.withPackages (pypkgs: with pypkgs; [requests]));
+	  script = pkgs.writeShellScript "sing-box-pre-start" ''
+            ${python-with-package} ${./sing-box-prestart.py} \
+              --token ${secrets.sing-box.github-token} \
+              --configuration_url "${secrets.sing-box.configuration-url}" \
+              --save_to "/run/sing-box/config.json"
+          '';
+        in
+          lib.mkForce "${script}";
+	};
     requires = [ "network.target" "nss-lookup.target" "network-online.target" ];
   };
 
