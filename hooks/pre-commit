@@ -11,4 +11,4 @@ nix flake update
 # check config can be built
 nixos-rebuild build
 
-git add flake.lock
+git add flake.nix && git add flake.lock

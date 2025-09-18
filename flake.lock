@@ -1,5 +1,23 @@
 {
   "nodes": {
+    "nixos-shared-flakes": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1758212585,
+        "narHash": "sha256-6vZTUfhy69Mnj2CpdN/jjSzTt4VDvIGfbhNxi/CgRUo=",
+        "owner": "Yxue-1906",
+        "repo": "nixos-shared-flake",
+        "rev": "190941b0bafb0945a364213bbaf75479e45f833e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Yxue-1906",
+        "repo": "nixos-shared-flake",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1757745802,
@@ -11,8 +29,8 @@
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "rev": "c23193b943c6c689d70ee98ce3128239ed9e32d1",
         "type": "github"
       }
     },
@@ -34,7 +52,7 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
+        "nixos-shared-flakes": "nixos-shared-flakes",
         "nixpkgs-sing-box": "nixpkgs-sing-box"
       }
     }
