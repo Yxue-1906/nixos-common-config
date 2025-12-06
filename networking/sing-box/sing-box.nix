@@ -7,7 +7,7 @@
 
   systemd.services.sing-box = {
     overrideStrategy = "asDropin";
-    # TODO: use CREDIENTIAL to download config
+    # TODO: use CREDIENTIAL to secure token and config url
     serviceConfig = {
       User = lib.mkForce "";
       Group = lib.mkForce "";
@@ -18,11 +18,12 @@
             ${python-with-package} ${./sing-box-prestart.py} \
               --token ${secrets.sing-box.github-token} \
               --configuration_url "${secrets.sing-box.configuration-url}" \
-              --save_to "/run/sing-box/config.json"
+              --save_to "/etc/sing-box/config.json"
           '';
         in
           lib.mkForce "${script}";
-	};
+      ExecStart = lib.mkForce [];
+    };
     requires = [ "network.target" "nss-lookup.target" "network-online.target" ];
   };
 

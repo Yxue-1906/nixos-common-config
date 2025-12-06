@@ -24,7 +24,7 @@ def main(argv):
       }
 
     try:
-        r = requests.get(args.configuration_url, headers=headers)
+        r = requests.get(args.configuration_url, headers=headers, timeout=5)
         config = r.json()
     except Exception as e:
         print(e)
