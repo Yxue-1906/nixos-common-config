@@ -1,4 +1,11 @@
 { self, pkgs, config, lib, secrets, ...}: {
+  nixpkgs.overlays = [
+    (final: prev: let 
+      sing-box-pkgs = import self.inputs.nixpkgs-sing-box { inherit (pkgs) system config; };
+    in {
+      sing-box = sing-box-pkgs.sing-box;
+    })
+  ];
 
   networking.firewall = {
     trustedInterfaces = [ "singbox_tun" ];
@@ -27,14 +34,7 @@
     requires = [ "network.target" "nss-lookup.target" "network-online.target" ];
   };
 
-  services.sing-box = 
-    let
-      sing-box-pkgs = (import self.inputs.nixpkgs-sing-box { inherit (pkgs) system config; });
-    in
-    {
-      enable = true;
-      package = sing-box-pkgs.sing-box;
-    };
+  services.sing-box.enable = true;
 
   services.nginx.virtualHosts.localhost = {
     locations."/sing-box/" = {

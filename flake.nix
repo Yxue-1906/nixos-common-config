@@ -13,12 +13,12 @@
     # nix-alien.url = "github:thiagokokada/nix-alien";
   };
   outputs = { self, nixos-shared-flakes, ... }@inputs: with nixos-shared-flakes.nixpkgs.lib; {
-    build-host = { profile, secrets, ... }: {
+    build-host = { profile, secrets, extra-args ? {}, ... }: {
       nixosConfigurations."unrelated" = nixosSystem rec {
 	# now set system manually is work around, find if can use nixpkgs.hostPlatform
 	system = "x86_64-linux";
         specialArgs = {
-	  inherit self secrets;
+	  inherit self secrets extra-args;
         };
         modules = [
           ./networking
