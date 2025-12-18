@@ -13,7 +13,7 @@
         patches = (prevAttrs.patches or []) ++ [
 	  ./restore-extract-button-behavior.patch
 	  # original implement cant read filename correctly if size to long
-	  ./fix-read-name-incorrectly-when-size-too-long.patch
+	  # ./fix-read-name-incorrectly-when-size-too-long.patch
 	];
       });
     })

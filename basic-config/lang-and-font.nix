@@ -19,7 +19,7 @@
       fcitx5.waylandFrontend = true;
       fcitx5.addons = with pkgs; [
         fcitx5-gtk
-	fcitx5-chinese-addons
+	qt6Packages.fcitx5-chinese-addons
         fcitx5-mozc
       ];
       # ibus.engines = with pkgs.ibus-engines; [ libpinyin mozc ];
@@ -31,8 +31,8 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
-      ubuntu_font_family
+      noto-fonts-color-emoji
+      ubuntu-classic
     ];
     fontconfig = {
       defaultFonts = {
