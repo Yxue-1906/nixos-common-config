@@ -2,6 +2,7 @@
   environment.systemPackages = with pkgs; [
     # provide rar support
     rar
+    file-roller
   ];
   nixpkgs.overlays = [
     (final: prev: {
