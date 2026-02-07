@@ -25,11 +25,12 @@
             ${python-with-package} ${./sing-box-prestart.py} \
               --token ${secrets.sing-box.github-token} \
               --configuration_url "${secrets.sing-box.configuration-url}" \
-              --save_to "/etc/sing-box/config.json"
+              --working_dir "/etc/sing-box/"
           '';
         in
           lib.mkForce "${script}";
       ExecStart = lib.mkForce [];
+
     };
     requires = [ "network.target" "nss-lookup.target" "network-online.target" ];
   };
