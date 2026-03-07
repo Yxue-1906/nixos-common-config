@@ -15,18 +15,18 @@
   outputs = { self, nixos-shared-flakes, ... }@inputs: with nixos-shared-flakes.nixpkgs.lib; {
     build-host = { profile, secrets, extra-args ? {}, ... }: {
       nixosConfigurations."unrelated" = nixosSystem rec {
-	# now set system manually is work around, find if can use nixpkgs.hostPlatform
-	system = "x86_64-linux";
+        # now set system manually is work around, find if can use nixpkgs.hostPlatform
+        system = "x86_64-linux";
         specialArgs = {
-	  inherit self secrets extra-args;
+          inherit self secrets extra-args;
         };
         modules = [
           ./networking
           ./applications
-	  ./filesystem
+          ./filesystem
           ./basic-config
-	  ./security
-	  profile
+          ./security
+          profile
         ];
       };
     };
