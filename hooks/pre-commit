@@ -1,14 +1,56 @@
+#!/usr/bin/env bash
+# pre-commit hook — validate a foreign nixos config builds against this repo
+#
+# Workflow:
+# 1. Clone the target nixos config repo into a temp directory
+# 2. Rewrite flake.nix inputs that reference the original remote URL to point
+#    at this local repository (file:///…) so the build uses the current source
+# 3. Optionally unlock git-crypt encrypted files if public-keys.txt is present
+# 4. Run nixos-rebuild build against the cloned config to verify it compiles
+#
+# Template placeholders (@REPO_URL@, @TO_SUBSTITUTE@, @BRANCH@) are replaced
+# by install-hooks.py at install time.
 set -e
 
-cd $(git rev-parse --show-toplevel)
+REPO_URL="@REPO_URL@"
+TO_SUBSTITUTE="@TO_SUBSTITUTE@"
+BRANCH="@BRANCH@"
 
-# pull remote changes
-git pull 
+THIS_REPO="$(git rev-parse --show-toplevel)"
 
-# update lock
-nix flake update
+WORK_DIR="$(mktemp -d)"
+trap 'rm -rf "$WORK_DIR"' EXIT
 
-# check config can be built
-nixos-rebuild build
+echo "[pre-commit] cloning $REPO_URL${BRANCH:+ (branch: $BRANCH)}"
 
-git add flake.nix && git add flake.lock
+if [ -n "$BRANCH" ]; then
+    git clone --branch "$BRANCH" "$REPO_URL" "$WORK_DIR/cloned"
+else
+    git clone "$REPO_URL" "$WORK_DIR/cloned"
+fi
+
+echo "[pre-commit] replacing occurrences of $TO_SUBSTITUTE with git+file://$THIS_REPO in flake.nix"
+
+cd "$WORK_DIR/cloned"
+
+if [ -f public-keys.txt ]; then
+    echo "[pre-commit] importing GPG keys and unlocking git-crypt"
+    gpg --import public-keys.txt
+    git crypt unlock
+else
+    echo "[pre-commit] no public-keys.txt found, skipping git-crypt unlock"
+fi
+
+# Replace every instance of TO_SUBSTITUTE in flake.nix with a file:// URL
+# pointing to this local repository so that flake inputs resolve locally.
+sed -i "s|$TO_SUBSTITUTE|git+file://$THIS_REPO|g" flake.nix
+
+echo "[pre-commit] running nixos-rebuild build"
+
+# Try the current hostname as a nixosConfiguration name first; if the cloned
+# config doesn't define one, pick the first available configuration.
+HOSTNAME="$(hostname)"
+
+nixos-rebuild build --flake "$WORK_DIR/cloned#$HOSTNAME"
+
+echo "[pre-commit] build passed"
