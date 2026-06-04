@@ -75,11 +75,15 @@ OVERRIDE_ARGS=(--override-input "$FLAKE_INPUT" "$THIS_REPO")
 if [ -n "${EXTRA_NIX_OVERRIDES:-}" ]; then
     IFS=';' read -ra pairs <<< "$EXTRA_NIX_OVERRIDES"
     for pair in "${pairs[@]}"; do
-        input="${pair%%=*}"
-        path="${pair#*=}"
-        if [ -n "$input" ] && [ -n "$path" ]; then
-            echo "[pre-commit] extra override: '$input' → $path"
-            OVERRIDE_ARGS+=(--override-input "$input" "$path")
+        # Split on the FIRST '=' only — flake references/paths may contain
+        # '=' in query parameters (e.g. ?rev=abc123, ?dir=subdir).
+        if [[ "$pair" =~ ^([^=]+)=(.*)$ ]]; then
+            input="${BASH_REMATCH[1]}"
+            path="${BASH_REMATCH[2]}"
+            if [ -n "$input" ] && [ -n "$path" ]; then
+                echo "[pre-commit] extra override: '$input' → $path"
+                OVERRIDE_ARGS+=(--override-input "$input" "$path")
+            fi
         fi
     done
 fi
