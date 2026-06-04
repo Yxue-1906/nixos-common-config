@@ -40,29 +40,8 @@ fi
 
 # ---------------------------------------------------------
 
-WORK_DIR="$(mktemp -d)"
-trap 'rm -rf "$WORK_DIR"' EXIT
-
-echo "[pre-commit] cloning $REPO_URL${BRANCH:+ (branch: $BRANCH)}"
-
-if [ -n "$BRANCH" ]; then
-    git clone --branch "$BRANCH" "$REPO_URL" "$WORK_DIR/cloned"
-else
-    git clone "$REPO_URL" "$WORK_DIR/cloned"
-fi
-
-cd "$WORK_DIR/cloned"
-
-if [ -f public-keys.txt ]; then
-    echo "[pre-commit] importing GPG keys and unlocking git-crypt"
-    gpg --import public-keys.txt
-    git crypt unlock
-else
-    echo "[pre-commit] no public-keys.txt found, skipping git-crypt unlock"
-fi
-
-echo "[pre-commit] running nixos-rebuild build"
-echo "[pre-commit] overriding flake input '$FLAKE_INPUT' → $THIS_REPO"
+# stash any unstaged changes to prevent impact
+git stash --keep-index --include-untracked
 
 # Build up --override-input arguments.
 # Primary override: replace the flake input that normally points to this
@@ -88,6 +67,32 @@ if [ -n "${EXTRA_NIX_OVERRIDES:-}" ]; then
     done
 fi
 
+cd "$THIS_REPO" && nix flake update "${OVERRIDE_ARGS[@]}"
+
+WORK_DIR="$(mktemp -d)"
+trap 'rm -rf "$WORK_DIR"' EXIT
+
+echo "[pre-commit] cloning $REPO_URL${BRANCH:+ (branch: $BRANCH)}"
+
+if [ -n "$BRANCH" ]; then
+    git clone --branch "$BRANCH" "$REPO_URL" "$WORK_DIR/cloned"
+else
+    git clone "$REPO_URL" "$WORK_DIR/cloned"
+fi
+
+cd "$WORK_DIR/cloned"
+
+if [ -f public-keys.txt ]; then
+    echo "[pre-commit] importing GPG keys and unlocking git-crypt"
+    gpg --import public-keys.txt
+    git crypt unlock
+else
+    echo "[pre-commit] no public-keys.txt found, skipping git-crypt unlock"
+fi
+
+echo "[pre-commit] running nixos-rebuild build"
+echo "[pre-commit] overriding flake input '$FLAKE_INPUT' → $THIS_REPO"
+
 # Try the current hostname as a nixosConfiguration name first; if the cloned
 # config doesn't define one, pick the first available configuration.
 HOSTNAME="$(hostname)"
@@ -95,4 +100,8 @@ HOSTNAME="$(hostname)"
 nix flake update "${OVERRIDE_ARGS[@]}"
 nixos-rebuild build --flake "$WORK_DIR/cloned#$HOSTNAME" "${OVERRIDE_ARGS[@]}"
 
+cd "$THIS_REPO" && git add flake.lock
+
 echo "[pre-commit] build passed"
+
+echo -e "\033[31mWARNING: remember to run git stash pop/apply to apply changes back(if any)!\033[0m"
