@@ -3,20 +3,42 @@
 #
 # Workflow:
 # 1. Clone the target nixos config repo into a temp directory
-# 2. Rewrite flake.nix inputs that reference the original remote URL to point
-#    at this local repository (file:///…) so the build uses the current source
-# 3. Optionally unlock git-crypt encrypted files if public-keys.txt is present
-# 4. Run nixos-rebuild build against the cloned config to verify it compiles
+# 2. Optionally unlock git-crypt encrypted files if public-keys.txt is present
+# 3. Run nixos-rebuild build against the cloned config, overriding the flake
+#    input that points to this repo with the local checkout path so the build
+#    uses the current source (plus any extra overrides from EXTRA_NIX_OVERRIDES)
 #
-# Template placeholders (@REPO_URL@, @TO_SUBSTITUTE@, @BRANCH@) are replaced
+# Template placeholders (@REPO_URL@, @FLAKE_INPUT@, @BRANCH@) are substituted
 # by install-hooks.py at install time.
 set -e
 
 REPO_URL="@REPO_URL@"
-TO_SUBSTITUTE="@TO_SUBSTITUTE@"
+FLAKE_INPUT="@FLAKE_INPUT@"
 BRANCH="@BRANCH@"
 
 THIS_REPO="$(git rev-parse --show-toplevel)"
+
+# ---- sync check: fetch latest remote refs before validating ----
+#
+# Use `git fetch` (NOT pull/merge) to sync remote refs without triggering
+# hooks — this avoids a validation loop when the hook runs during
+# pull/merge/rebase.
+echo "[pre-commit] fetching upstream"
+git fetch --quiet
+
+# Compare local HEAD against the upstream tracking branch:
+#   - HEAD behind upstream  → refuse: user must pull remote changes first
+#   - HEAD == upstream      → proceed (staged changes need validation)
+#   - HEAD ahead of upstream → proceed (unpushed local work needs validation)
+if git rev-parse '@{u}' >/dev/null 2>&1; then
+    if [ "$(git rev-parse HEAD)" != "$(git rev-parse '@{u}')" ] && \
+       git merge-base --is-ancestor HEAD '@{u}'; then
+        echo "[pre-commit] local HEAD is behind upstream — pull remote changes before committing"
+        exit 1
+    fi
+fi
+
+# ---------------------------------------------------------
 
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
@@ -29,8 +51,6 @@ else
     git clone "$REPO_URL" "$WORK_DIR/cloned"
 fi
 
-echo "[pre-commit] replacing occurrences of $TO_SUBSTITUTE with git+file://$THIS_REPO in flake.nix"
-
 cd "$WORK_DIR/cloned"
 
 if [ -f public-keys.txt ]; then
@@ -41,16 +61,33 @@ else
     echo "[pre-commit] no public-keys.txt found, skipping git-crypt unlock"
 fi
 
-# Replace every instance of TO_SUBSTITUTE in flake.nix with a file:// URL
-# pointing to this local repository so that flake inputs resolve locally.
-sed -i "s|$TO_SUBSTITUTE|git+file://$THIS_REPO|g" flake.nix
-
 echo "[pre-commit] running nixos-rebuild build"
+echo "[pre-commit] overriding flake input '$FLAKE_INPUT' → $THIS_REPO"
+
+# Build up --override-input arguments.
+# Primary override: replace the flake input that normally points to this
+# repo with the actual local checkout so the build uses the current source.
+OVERRIDE_ARGS=(--override-input "$FLAKE_INPUT" "$THIS_REPO")
+
+# EXTRA_NIX_OVERRIDES allows additional flake input replacements at runtime.
+# Format: semicolon-separated "input=path" pairs.
+# Example: EXTRA_NIX_OVERRIDES="nixpkgs=/path/to/nixpkgs;utils=/path/to/utils"
+if [ -n "${EXTRA_NIX_OVERRIDES:-}" ]; then
+    IFS=';' read -ra pairs <<< "$EXTRA_NIX_OVERRIDES"
+    for pair in "${pairs[@]}"; do
+        input="${pair%%=*}"
+        path="${pair#*=}"
+        if [ -n "$input" ] && [ -n "$path" ]; then
+            echo "[pre-commit] extra override: '$input' → $path"
+            OVERRIDE_ARGS+=(--override-input "$input" "$path")
+        fi
+    done
+fi
 
 # Try the current hostname as a nixosConfiguration name first; if the cloned
 # config doesn't define one, pick the first available configuration.
 HOSTNAME="$(hostname)"
 
-nixos-rebuild build --flake "$WORK_DIR/cloned#$HOSTNAME"
+nixos-rebuild build --flake "$WORK_DIR/cloned#$HOSTNAME" "${OVERRIDE_ARGS[@]}"
 
 echo "[pre-commit] build passed"
