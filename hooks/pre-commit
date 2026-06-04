@@ -92,6 +92,7 @@ fi
 # config doesn't define one, pick the first available configuration.
 HOSTNAME="$(hostname)"
 
+nix flake update "${OVERRIDE_ARGS[@]}"
 nixos-rebuild build --flake "$WORK_DIR/cloned#$HOSTNAME" "${OVERRIDE_ARGS[@]}"
 
 echo "[pre-commit] build passed"
