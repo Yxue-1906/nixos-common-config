@@ -9,7 +9,8 @@
   };
   inputs = {
     nixos-shared-flakes.url = "github:Yxue-1906/nixos-shared-flake";
-    nixpkgs-sing-box.url = "github:NixOS/nixpkgs/1a24b14b4fd3adfa79751a3445fb2e0e74eefaf1";
+    nixos-25-11.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-sing-box.url = "github:NixOS/nixpkgs/6b316287bae2ee04c9b93c8c858d930fd07d7338";
     # nix-alien.url = "github:thiagokokada/nix-alien";
   };
   outputs = { self, nixos-shared-flakes, ... }@inputs: with nixos-shared-flakes.nixpkgs.lib; {

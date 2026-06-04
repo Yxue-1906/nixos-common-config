@@ -4,9 +4,9 @@
   services.envfs.enable = true;
 
   # Override default behaviors when close laptop lid
-  services.logind = {
-    lidSwitchDocked = "ignore";
-    lidSwitchExternalPower = "lock";
+  services.logind.settings.Login = {
+    HandleLidSwitchDocked = "ignore";
+    HandleLidSwitchExternalPower = "lock";
   };
 
   # Setup logrorate
@@ -59,4 +59,10 @@ nE0AAp9JSHxDYsma9pi4g0Phg3BgOm2euTRzw7R0SzU=
 -----END CERTIFICATE-----
 ''
   ];
+  
+  # Kill process to free memory to prevent freeze
+  services.earlyoom = {
+    enable = true;
+    freeMemThreshold = 3;
+  };
 }

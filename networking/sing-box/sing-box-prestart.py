@@ -36,21 +36,6 @@ def main(argv):
     try:
         os.makedirs(args.working_dir, exist_ok=True)
         os.chdir(args.working_dir)
-        check_is_campus_network = requests.get("https://gw.buaa.edu.cn/cgi-bin/rad_user_info")
-        if check_is_campus_network.ok and os.path.isfile("direct.json"):
-            # is campus network
-
-            for o in config["outbounds"]:
-                o_type = o["type"]
-                if o_type == "vmess" or \
-                    o_type == "vless" or \
-                    o_type == "trojan":
-                    o["detour"] = "direct"
-            
-            config["outbounds"] = [ o for o in config["outbounds"] if o["tag"] != "direct"]
-        else:
-            if os.path.isfile("direct.json"):
-                os.remove("direct.json")
         f = open("config.json", "w")
         json.dump(config, f, indent=2)
     except Exception as e:

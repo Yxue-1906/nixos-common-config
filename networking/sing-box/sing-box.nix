@@ -1,7 +1,7 @@
 { self, pkgs, config, lib, secrets, ...}: {
   nixpkgs.overlays = [
     (final: prev: let 
-      sing-box-pkgs = import self.inputs.nixpkgs-sing-box { inherit (pkgs) system config; };
+      sing-box-pkgs = import self.inputs.nixpkgs-sing-box { inherit (pkgs) system; };
     in {
       sing-box = sing-box-pkgs.sing-box;
     })
