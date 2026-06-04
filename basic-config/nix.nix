@@ -13,7 +13,6 @@
       # Use tsinghua binary cache mirror
       substituters = [
         "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
-        "https://cache.nixos.org"
       ];
     };
     # collect garbage everyday

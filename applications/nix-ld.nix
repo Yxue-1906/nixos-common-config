@@ -8,5 +8,10 @@
   # environment.systemPackages = with pkgs; [
   #   nix-alien
   # ];
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      zlib zstd stdenv.cc.cc 
+    ];
+  };
 }

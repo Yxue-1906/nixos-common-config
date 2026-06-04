@@ -21,5 +21,11 @@
   nixpkgs.config.allowUnfree = true;
 
   # Enable local Nginx
-  services.nginx.enable = true;
+  services.nginx = {
+    enable = true;
+    virtualHosts.localhost.locations."/" = {
+      return = "200 '<html><body><a href=\"/ariang/\">ariang</a><br/><a href=\"/sing-box/\">sing-box</a></body></html>'";
+      extraConfig = "default_type text/html;";
+    };
+  };
 }
