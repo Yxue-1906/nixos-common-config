@@ -1,15 +1,31 @@
 {
   "nodes": {
+    "nixos-25-11": {
+      "locked": {
+        "lastModified": 1779796641,
+        "narHash": "sha256-ZsIrKmhp4vbBXoXXmR/tBXA/UCsAQiJL9vsgZEduhVY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "25f538306313eae3927264466c70d7001dcea1df",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixos-shared-flakes": {
       "inputs": {
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1772882381,
-        "narHash": "sha256-/PZyRB6otICKOQCKgTeeX4z4gjx0+JuH5xmIC1Tmvmo=",
+        "lastModified": 1780573032,
+        "narHash": "sha256-3lKZbT/t3XWKtyfr4b8GGno82/qhrNR5fCLnpXY97pQ=",
         "owner": "Yxue-1906",
         "repo": "nixos-shared-flake",
-        "rev": "eec237c4de4cfe9d4ac547d3e8599180ae80c6c2",
+        "rev": "7fb6448c2c3c4ab0309b40229f8416a6d457f350",
         "type": "github"
       },
       "original": {
@@ -20,38 +36,39 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1772822230,
-        "narHash": "sha256-yf3iYLGbGVlIthlQIk5/4/EQDZNNEmuqKZkQssMljuw=",
+        "lastModified": 1780453794,
+        "narHash": "sha256-bXMRa9VTsHSPXL4Cw8R6JJLQeY3Y/IP4+YJCYVmQ7FY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "71caefce12ba78d84fe618cf61644dce01cf3a96",
+        "rev": "6b316287bae2ee04c9b93c8c858d930fd07d7338",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "71caefce12ba78d84fe618cf61644dce01cf3a96",
+        "rev": "6b316287bae2ee04c9b93c8c858d930fd07d7338",
         "type": "github"
       }
     },
     "nixpkgs-sing-box": {
       "locked": {
-        "lastModified": 1762395112,
-        "narHash": "sha256-UkJYvyI2WvQZ8n+2O/+IDkeUxAujdNkYc66ij95/klI=",
+        "lastModified": 1780453794,
+        "narHash": "sha256-bXMRa9VTsHSPXL4Cw8R6JJLQeY3Y/IP4+YJCYVmQ7FY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1a24b14b4fd3adfa79751a3445fb2e0e74eefaf1",
+        "rev": "6b316287bae2ee04c9b93c8c858d930fd07d7338",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1a24b14b4fd3adfa79751a3445fb2e0e74eefaf1",
+        "rev": "6b316287bae2ee04c9b93c8c858d930fd07d7338",
         "type": "github"
       }
     },
     "root": {
       "inputs": {
+        "nixos-25-11": "nixos-25-11",
         "nixos-shared-flakes": "nixos-shared-flakes",
         "nixpkgs-sing-box": "nixpkgs-sing-box"
       }
