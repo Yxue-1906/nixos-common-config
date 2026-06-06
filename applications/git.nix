@@ -4,7 +4,7 @@
     config = {
       mergetool = {
         tool = "vimdiff";
-	keepBackup = false;
+        keepBackup = false;
       };
     };
   };

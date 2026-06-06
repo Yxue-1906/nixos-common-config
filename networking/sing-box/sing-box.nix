@@ -1,10 +1,22 @@
-{ self, pkgs, config, lib, secrets, ...}: {
+{
+  self,
+  pkgs,
+  config,
+  lib,
+  secrets,
+  ...
+}:
+{
   nixpkgs.overlays = [
-    (final: prev: let 
-      sing-box-pkgs = import self.inputs.nixpkgs-sing-box { inherit (pkgs) system; };
-    in {
-      sing-box = sing-box-pkgs.sing-box;
-    })
+    (
+      final: prev:
+      let
+        sing-box-pkgs = import self.inputs.nixpkgs-sing-box { inherit (pkgs) system; };
+      in
+      {
+        sing-box = sing-box-pkgs.sing-box;
+      }
+    )
   ];
 
   networking.firewall = {
@@ -18,21 +30,26 @@
     serviceConfig = {
       User = lib.mkForce "";
       Group = lib.mkForce "";
-      ExecStartPre = with pkgs; 
+      ExecStartPre =
+        with pkgs;
         let
-          python-with-package = lib.getExe (python3.withPackages (pypkgs: with pypkgs; [requests]));
-	  script = pkgs.writeShellScript "sing-box-pre-start" ''
+          python-with-package = lib.getExe (python3.withPackages (pypkgs: with pypkgs; [ requests ]));
+          script = pkgs.writeShellScript "sing-box-pre-start" ''
             ${python-with-package} ${./sing-box-prestart.py} \
               --token ${secrets.sing-box.github-token} \
               --configuration_url "${secrets.sing-box.configuration-url}" \
               --working_dir "/etc/sing-box/"
           '';
         in
-          lib.mkForce "${script}";
-      ExecStart = lib.mkForce [];
+        lib.mkForce "${script}";
+      ExecStart = lib.mkForce [ ];
 
     };
-    requires = [ "network.target" "nss-lookup.target" "network-online.target" ];
+    requires = [
+      "network.target"
+      "nss-lookup.target"
+      "network-online.target"
+    ];
   };
 
   services.sing-box.enable = true;
@@ -43,4 +60,4 @@
       index = "index.html";
     };
   };
-} 
+}

@@ -14,10 +14,15 @@
     enableSSHSupport = true;
   };
   # Disable ccid
-  environment.etc."gnupg/scdaemon.conf".text = lib.generators.toKeyValue {
-    mkKeyValue = (key: value: if lib.isString value then "${key} ${value}" else lib.optionalString value key);
-    listsAsDuplicateKeys = true;
-  } {
-    disable-ccid = true;
-  };
+  environment.etc."gnupg/scdaemon.conf".text =
+    lib.generators.toKeyValue
+      {
+        mkKeyValue = (
+          key: value: if lib.isString value then "${key} ${value}" else lib.optionalString value key
+        );
+        listsAsDuplicateKeys = true;
+      }
+      {
+        disable-ccid = true;
+      };
 }

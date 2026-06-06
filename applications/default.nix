@@ -19,7 +19,7 @@
 
   # Allow Unfree
   nixpkgs.config.allowUnfree = true;
-  
+
   # Enable local Nginx
   services.nginx.enable = true;
 }

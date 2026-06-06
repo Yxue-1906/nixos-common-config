@@ -1,4 +1,10 @@
-{ pkgs, config, lib, ... }: {
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+{
 
   # Enable hardware key support
   services.udev.packages = [ pkgs.yubikey-personalization ];
