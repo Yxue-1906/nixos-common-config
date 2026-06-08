@@ -8,7 +8,10 @@
     ./editors.nix
     ./browsers.nix
     ./misc.nix
-    ./nautilus
+
+    # disable nautilus override
+    # ./nautilus
+    
     # ./mutter
     # File Roller's issue should have been fixed in https://gitlab.gnome.org/GNOME/file-roller/-/commit/5aaa8c8227d820b3490e9ea406031d5dd5eddce5
     # ./file-roller
