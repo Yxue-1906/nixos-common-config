@@ -1,6 +1,6 @@
 { pkgs, ... }: {
 
-  boot.kernelPackages = pkgs.linuxPackages_6_6;
+  # boot.kernelPackages = pkgs.linuxPackages_6_6;
 
   # Use the systemd boot loader.
   boot.loader = {
