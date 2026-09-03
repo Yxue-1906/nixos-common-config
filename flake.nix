@@ -8,11 +8,14 @@
     ];
   };
   inputs = {
+    sfd-nix.url = "git+https://forge.asnk.io/sugar/sfd-nix";
     nixos-shared-flakes.url = "github:Yxue-1906/nixos-shared-flake";
-    nixos-25-11.url = "github:NixOS/nixpkgs/nixos-25.11";
-    nixpkgs-sing-box.url = "github:NixOS/nixpkgs/6b316287bae2ee04c9b93c8c858d930fd07d7338";
     nix-direnv = {
       url = "github:nix-community/nix-direnv/e6e7b3537c3c08650c5bfb3de480118ed62e5de5";
+      inputs.nixpkgs.follows = "nixos-shared-flakes/nixpkgs";
+    };
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixos-shared-flakes/nixpkgs";
     };
     # nix-alien.url = "github:thiagokokada/nix-alien";
@@ -42,6 +45,8 @@
               ./basic-config
               ./security
               profile
+              inputs.sfd-nix.nixosModules.default
+              inputs.nix-index-database.nixosModules.default
               ({ ... }: { nixpkgs.overlays = [ inputs.nix-direnv.overlays.default ]; })
             ];
           };

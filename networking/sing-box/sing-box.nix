@@ -53,11 +53,4 @@
   };
 
   services.sing-box.enable = true;
-
-  services.nginx.virtualHosts.localhost = {
-    locations."/sing-box/" = {
-      alias = "${pkgs.metacubexd}/";
-      index = "index.html";
-    };
-  };
 }

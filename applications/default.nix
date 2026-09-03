@@ -17,9 +17,6 @@
     # ./file-roller
   ];
 
-  # suggest command when not found
-  programs.command-not-found.enable = true;
-
   # Allow Unfree
   nixpkgs.config.allowUnfree = true;
 
