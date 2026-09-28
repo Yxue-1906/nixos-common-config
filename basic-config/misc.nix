@@ -10,9 +10,9 @@
   };
 
   # Setup logrorate
-  services.journald.extraConfig = ''
-    MaxRetentionSec=30day
-  '';
+  services.journald.settings.Journal = {
+    MaxRetentionSec = "30day";
+  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;

@@ -100,8 +100,6 @@ HOSTNAME="$(hostname)"
 nix flake update "${OVERRIDE_ARGS[@]}"
 nixos-rebuild build --flake "$WORK_DIR/cloned#$HOSTNAME" "${OVERRIDE_ARGS[@]}"
 
-cd "$THIS_REPO" && git add flake.lock
-
 echo "[pre-commit] build passed"
 
 echo -e "\033[31mWARNING: remember to run git stash pop/apply to apply changes back(if any)!\033[0m"
